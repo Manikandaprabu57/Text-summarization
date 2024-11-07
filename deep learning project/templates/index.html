@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Summarizer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            font-weight: bold;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            font-size: 16px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            font-size: 18px;
+            color: white;
+            background-color: #5b9bd5;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #4a8bb2;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e0f7fa;
+            border-radius: 5px;
+            color: #333;
+        }
+        #result h2 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Text Summarizer</h1>
+        <form id="summarizeForm">
+            <label for="text">Enter text to summarize:</label>
+            <textarea id="text" placeholder="Type or paste text here..."></textarea>
+            <button type="button" onclick="summarizeText()">Summarize</button>
+        </form>
+        <div id="result" style="display:none;">
+            <h2>Summary:</h2>
+            <p id="summaryText"></p>
+        </div>
+    </div>
+
+    <script>
+        async function summarizeText() {
+            const text = document.getElementById('text').value;
+            if (!text) {
+                alert("Please enter some text to summarize.");
+                return;
+            }
+
+            document.getElementById('summaryText').innerText = "Generating summary...";
+            document.getElementById('result').style.display = "block";
+
+            const response = await fetch('/summarize', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: text })
+            });
+
+            const result = await response.json();
+            if (result.summary) {
+                document.getElementById('summaryText').innerText = result.summary;
+            } else {
+                document.getElementById('summaryText').innerText = "Error: " + result.error;
+            }
+        }
+    </script>
+</body>
+</html>
